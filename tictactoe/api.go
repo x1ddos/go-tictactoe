@@ -67,7 +67,7 @@ func (ttt *TicTacToeApi) BoardGetMove(r *http.Request,
 	if freeIdxLen > 0 {
 		r := rand.New(rand.NewSource(time.Now().UnixNano()))
 		randomIdx := r.Intn(freeIdxLen)
-		runes[randomIdx] = 'O'
+		runes[freeIndices[randomIdx]] = 'O'
 		resp.State = string(runes)
 	} else {
 		return fmt.Errorf("Bad Request: This board is full: %q", req.State)
