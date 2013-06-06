@@ -7,19 +7,19 @@ import (
 	"net/http"
 	"time"
 
-	"appengine"
 	"appengine/user"
 
 	"github.com/crhym3/go-endpoints/endpoints"
 )
 
-const (
-	clientId  = "YOUR-CLIENT-ID" // xxx.apps.googleusercontent.com
-	authScope = "https://www.googleapis.com/auth/userinfo.email"
-)
+const clientId = "YOUR-CLIENT-ID"
 
-var defaultScopes = []string{authScope}
-var clientIds = []string{clientId, endpoints.ApiExplorerClientId}
+var (
+	scopes    = []string{endpoints.EmailScope}
+	clientIds = []string{clientId, endpoints.ApiExplorerClientId}
+	// in case we'll want to use TicTacToe API from an Android app
+	audiences = []string{clientId}
+)
 
 type BoardMsg struct {
 	State string `json:"state" endpoints:"required"`
@@ -43,9 +43,12 @@ type ScoresListResp struct {
 	Items []*ScoreRespMsg `json:"items"`
 }
 
+// TicTacToe API service
 type TicTacToeApi struct {
 }
 
+// BoardGetMove simulates a computer move in tictactoe.
+// Exposed as API endpoint
 func (ttt *TicTacToeApi) BoardGetMove(r *http.Request,
 	req *BoardMsg, resp *BoardMsg) error {
 
@@ -75,10 +78,12 @@ func (ttt *TicTacToeApi) BoardGetMove(r *http.Request,
 	return nil
 }
 
+// ScoresList queries scores for the current user.
+// Exposed as API endpoint
 func (ttt *TicTacToeApi) ScoresList(r *http.Request,
 	req *ScoresListReq, resp *ScoresListResp) error {
 
-	c := appengine.NewContext(r)
+	c := endpoints.NewContext(r)
 	u, err := getCurrentUser(c)
 	if err != nil {
 		return err
@@ -98,10 +103,11 @@ func (ttt *TicTacToeApi) ScoresList(r *http.Request,
 	return nil
 }
 
+// ScoresInsert inserts a new score for the current user.
 func (ttt *TicTacToeApi) ScoresInsert(r *http.Request,
 	req *ScoreReqMsg, resp *ScoreRespMsg) error {
 
-	c := appengine.NewContext(r)
+	c := endpoints.NewContext(r)
 	u, err := getCurrentUser(c)
 	if err != nil {
 		return err
@@ -114,36 +120,46 @@ func (ttt *TicTacToeApi) ScoresInsert(r *http.Request,
 	return nil
 }
 
-func getCurrentUser(c appengine.Context) (*user.User, error) {
-	u, err := endpoints.CurrentUserWithScope(c, authScope)
+// getCurrentUser retrieves a user associated with the request.
+// If there's no user (e.g. no auth info present in the request) returns
+// an "unauthorized" error.
+func getCurrentUser(c endpoints.Context) (*user.User, error) {
+	u, err := endpoints.CurrentUser(c, scopes, audiences, clientIds)
 	if err != nil {
 		return nil, err
 	}
 	if u == nil {
 		return nil, errors.New("Unauthorized: Please, sign in.")
 	}
+	c.Debugf("Current user: %#v", u)
 	return u, nil
 }
 
-func init() {
+// RegisterService exposes TicTacToeApi methods as API endpoints.
+// 
+// The registration/initialization during startup is not performed here but
+// in app package. It is separated from this package (tictactoe) so that the
+// service and its methods defined here can be used in another app,
+// e.g. http://github.com/crhym3/go-endpoints.appspot.com.
+func RegisterService() (*endpoints.RpcService, error) {
 	api := &TicTacToeApi{}
 	rpcService, err := endpoints.RegisterService(api,
 		"tictactoe", "v1", "Tic Tac Toe API", true)
 	if err != nil {
-		panic(err.Error())
+		return nil, err
 	}
 
 	info := rpcService.MethodByName("BoardGetMove").Info()
-	info.Path, info.HttpMethod, info.Name, info.Scopes, info.ClientIds =
-		"board", "POST", "board.getmove", defaultScopes, clientIds
+	info.Path, info.HttpMethod, info.Name = "board", "POST", "board.getmove"
+	info.Scopes, info.ClientIds, info.Audiences = scopes, clientIds, audiences
 
 	info = rpcService.MethodByName("ScoresList").Info()
-	info.Path, info.HttpMethod, info.Name, info.Scopes, info.ClientIds =
-		"scores", "GET", "scores.list", defaultScopes, clientIds
+	info.Path, info.HttpMethod, info.Name = "scores", "GET", "scores.list"
+	info.Scopes, info.ClientIds, info.Audiences = scopes, clientIds, audiences
 
 	info = rpcService.MethodByName("ScoresInsert").Info()
-	info.Path, info.HttpMethod, info.Name, info.Scopes, info.ClientIds =
-		"scores", "POST", "scores.insert", defaultScopes, clientIds
+	info.Path, info.HttpMethod, info.Name = "scores", "POST", "scores.insert"
+	info.Scopes, info.ClientIds, info.Audiences = scopes, clientIds, audiences
 
-	endpoints.HandleHttp()
+	return rpcService, nil
 }
