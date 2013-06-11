@@ -4,10 +4,6 @@ appengine-endpoints-tictactoe-go
 This application implements a simple backend for a Tic Tac Toe game using
 Google Cloud Endpoints, App Engine, and Go.
 
-More info on Cloud Endpoints for Go is available here:
-https://github.com/crhym3/go-endpoints
-
-
 ## Products
 - [App Engine][1]
 
@@ -15,7 +11,7 @@ https://github.com/crhym3/go-endpoints
 - [Go][2]
 
 ## APIs
-- [Google Cloud Endpoints][3]
+- [Cloud Endpoints for Go][3]
 
 ## Setup Instructions
 
@@ -34,7 +30,7 @@ https://github.com/crhym3/go-endpoints
 
 [1]: https://developers.google.com/appengine
 [2]: http://golang.org/
-[3]: https://developers.google.com/appengine/docs/python/endpoints/
+[3]: https://github.com/crhym3/go-endpoints/wiki/Getting-Started-%28readme%29
 [4]: https://developers.google.com/appengine/downloads
 [5]: https://github.com/crhym3/go-tictactoe/blob/master/static/js/base.js
 [6]: https://github.com/crhym3/go-tictactoe/blob/master/tictactoe/api.go
