@@ -28,13 +28,15 @@ Google Cloud Endpoints, App Engine, and Go.
 5. Test your Endpoints by visiting the Google APIs Explorer: 
   [localhost:8080/_ah/api/explorer][10]
 
+Once setup, the app should be accessible at [localhost:8080](http://localhost:8080).
+
 [1]: https://developers.google.com/appengine
 [2]: http://golang.org/
-[3]: https://github.com/crhym3/go-endpoints/wiki/Getting-Started-%28readme%29
+[3]: https://github.com/crhym3/go-endpoints#cloud-endpoints-for-go
 [4]: https://developers.google.com/appengine/downloads
 [5]: https://github.com/crhym3/go-tictactoe/blob/master/static/js/base.js
 [6]: https://github.com/crhym3/go-tictactoe/blob/master/tictactoe/api.go
-[7]: https://code.google.com/apis/console
+[7]: https://console.developers.google.com
 [8]: https://github.com/crhym3/go-tictactoe/blob/master/app.yaml
 [9]: http://localhost:8000/
 [10]: http://localhost:8080/_ah/api/explorer
