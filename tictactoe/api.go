@@ -16,7 +16,7 @@ const clientId = "YOUR-CLIENT-ID"
 
 var (
 	scopes    = []string{endpoints.EmailScope}
-	clientIds = []string{clientId, endpoints.ApiExplorerClientId}
+	clientIds = []string{clientId, endpoints.APIExplorerClientID}
 	// in case we'll want to use TicTacToe API from an Android app
 	audiences = []string{clientId}
 )
@@ -136,12 +136,12 @@ func getCurrentUser(c endpoints.Context) (*user.User, error) {
 }
 
 // RegisterService exposes TicTacToeApi methods as API endpoints.
-// 
+//
 // The registration/initialization during startup is not performed here but
 // in app package. It is separated from this package (tictactoe) so that the
 // service and its methods defined here can be used in another app,
 // e.g. http://github.com/crhym3/go-endpoints.appspot.com.
-func RegisterService() (*endpoints.RpcService, error) {
+func RegisterService() (*endpoints.RPCService, error) {
 	api := &TicTacToeApi{}
 	rpcService, err := endpoints.RegisterService(api,
 		"tictactoe", "v1", "Tic Tac Toe API", true)
@@ -150,15 +150,15 @@ func RegisterService() (*endpoints.RpcService, error) {
 	}
 
 	info := rpcService.MethodByName("BoardGetMove").Info()
-	info.Path, info.HttpMethod, info.Name = "board", "POST", "board.getmove"
+	info.Path, info.HTTPMethod, info.Name = "board", "POST", "board.getmove"
 	info.Scopes, info.ClientIds, info.Audiences = scopes, clientIds, audiences
 
 	info = rpcService.MethodByName("ScoresList").Info()
-	info.Path, info.HttpMethod, info.Name = "scores", "GET", "scores.list"
+	info.Path, info.HTTPMethod, info.Name = "scores", "GET", "scores.list"
 	info.Scopes, info.ClientIds, info.Audiences = scopes, clientIds, audiences
 
 	info = rpcService.MethodByName("ScoresInsert").Info()
-	info.Path, info.HttpMethod, info.Name = "scores", "POST", "scores.insert"
+	info.Path, info.HTTPMethod, info.Name = "scores", "POST", "scores.insert"
 	info.Scopes, info.ClientIds, info.Audiences = scopes, clientIds, audiences
 
 	return rpcService, nil
