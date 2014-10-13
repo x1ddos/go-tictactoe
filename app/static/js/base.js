@@ -21,27 +21,6 @@ google.devrel.samples = google.devrel.samples || {};
 google.devrel.samples.ttt = google.devrel.samples.ttt || {};
 
 /**
- * Client ID of the application (from the APIs Console), e.g.
- * 123.apps.googleusercontent.com
- * @type {string}
- */
-google.devrel.samples.ttt.CLIENT_ID =
-    'YOUR-CLIENT-ID';
-
-/**
- * Scopes used by the application.
- * @type {string}
- */
-google.devrel.samples.ttt.SCOPES =
-    'https://www.googleapis.com/auth/userinfo.email';
-
-/**
- * Response type of the auth token.
- * @type {string}
- */
-google.devrel.samples.ttt.RESPONSE_TYPE = 'token id_token';
-
-/**
  * Status for an unfinished game.
  * @type {number}
  */
@@ -70,10 +49,10 @@ google.devrel.samples.ttt.TIE = 3;
  * @type {Array.number}
  */
 google.devrel.samples.ttt.STATUS_STRINGS = [
-    "NOT_DONE",
-    "WON",
-    "LOST",
-    "TIE"
+    'NOT_DONE',
+    'WON',
+    'LOST',
+    'TIE'
 ];
 
 /**
@@ -89,50 +68,14 @@ google.devrel.samples.ttt.signedIn = false;
 google.devrel.samples.ttt.waitingForMove = true;
 
 /**
- * Loads the application UI after the user has completed auth.
+ * Signs the user out.
  */
-google.devrel.samples.ttt.userAuthed = function() {
-  var request = gapi.client.oauth2.userinfo.get().execute(function(resp) {
-    if (!resp.code) {
-      var token = gapi.auth.getToken();
-      // Use id_token instead of bearer token
-      token.access_token = token.id_token;
-      gapi.auth.setToken(token);
-      google.devrel.samples.ttt.signedIn = true;
-      document.getElementById('userLabel').innerHTML = resp.email;
-      document.getElementById('signinButton').innerHTML = 'Sign out';
-      google.devrel.samples.ttt.setBoardEnablement(true);
-      google.devrel.samples.ttt.queryScores();
-    }
-  });
-};
-
-/**
- * Handles the auth flow, with the given value for immediate mode.
- * @param {boolean} mode Whether or not to use immediate mode.
- * @param {Function} callback Callback to call on completion.
- */
-google.devrel.samples.ttt.signin = function(mode, callback) {
-  gapi.auth.authorize({client_id: google.devrel.samples.ttt.CLIENT_ID,
-      scope: google.devrel.samples.ttt.SCOPES, immediate: mode,
-      response_type: google.devrel.samples.ttt.RESPONSE_TYPE},
-      callback);
-};
-
-/**
- * Presents the user with the authorization popup.
- */
-google.devrel.samples.ttt.auth = function() {
-  if (!google.devrel.samples.ttt.signedIn) {
-    google.devrel.samples.ttt.signin(false,
-        google.devrel.samples.ttt.userAuthed);
-  } else {
-    google.devrel.samples.ttt.signedIn = false;
-    document.getElementById('userLabel').innerHTML = '(not signed in)';
-    document.getElementById('signinButton').innerHTML = 'Sign in';
-    google.devrel.samples.ttt.setBoardEnablement(false);
-  }
-};
+google.devrel.samples.ttt.signout = function() {
+  document.getElementById('signinButtonContainer').classList.add('visible');
+  document.getElementById('signedInStatus').classList.remove('visible');
+  google.devrel.samples.ttt.setBoardEnablement(false);
+  google.devrel.samples.ttt.signedIn = false;
+}
 
 /**
  * Handles a square click.
@@ -347,21 +290,18 @@ google.devrel.samples.ttt.getStringsAtPositions = function(boardString, first,
 /**
  * Initializes the application.
  * @param {string} apiRoot Root of the API's path.
+ * @param {string} tokenEmail The email parsed from the auth/ID token.
  */
-google.devrel.samples.ttt.init = function(apiRoot) {
-  // Loads the OAuth and Tic Tac Toe APIs asynchronously, and triggers login
-  // when they have completed.
-  var apisToLoad;
+google.devrel.samples.ttt.init = function(apiRoot, tokenEmail) {
+  // Loads the Tic Tac Toe API asynchronously, and triggers login
+  // in the UI when loading has completed.
   var callback = function() {
-    if (--apisToLoad == 0) {
-      google.devrel.samples.ttt.signin(true,
-          google.devrel.samples.ttt.userAuthed);
-    }
+    google.devrel.samples.ttt.signedIn = true;
+    document.getElementById('userLabel').innerHTML = tokenEmail;
+    google.devrel.samples.ttt.setBoardEnablement(true);
+    google.devrel.samples.ttt.queryScores();
   }
-
-  apisToLoad = 2; // must match number of calls to gapi.client.load()
   gapi.client.load('tictactoe', 'v1', callback, apiRoot);
-  gapi.client.load('oauth2', 'v2', callback);
 
   var buttons = document.querySelectorAll('td');
   for (var i = 0; i < buttons.length; i++) {

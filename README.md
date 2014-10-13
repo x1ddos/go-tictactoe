@@ -17,7 +17,7 @@ Google Cloud Endpoints, App Engine, and Go.
 
 1. Make sure to have the [App Engine SDK for Go][4] installed, version
    1.8.0 or higher.
-2. Change `'YOUR-CLIENT-ID'` in [`static/js/base.js`][5] and 
+2. Change `'YOUR-CLIENT-ID'` in [`static/js/render.js`][5] and 
    [`api.go`][6] to the respective client ID(s) you have registered 
    in the [APIs Console][7].
 3. Update the value of `application` in [`app.yaml`][8] from `go-endpoints` 
@@ -34,9 +34,9 @@ Once setup, the app should be accessible at [localhost:8080](http://localhost:80
 [2]: http://golang.org/
 [3]: https://github.com/crhym3/go-endpoints#cloud-endpoints-for-go
 [4]: https://developers.google.com/appengine/downloads
-[5]: https://github.com/crhym3/go-tictactoe/blob/master/static/js/base.js
+[5]: https://github.com/crhym3/go-tictactoe/blob/master/app/static/js/render.js
 [6]: https://github.com/crhym3/go-tictactoe/blob/master/tictactoe/api.go
 [7]: https://console.developers.google.com
-[8]: https://github.com/crhym3/go-tictactoe/blob/master/app.yaml
+[8]: https://github.com/crhym3/go-tictactoe/blob/master/app/app.yaml
 [9]: http://localhost:8000/
 [10]: http://localhost:8080/_ah/api/explorer
