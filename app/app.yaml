@@ -16,8 +16,8 @@ handlers:
 - url: /images
   static_dir: static/images
 - url: /
-  static_files: templates/tictactoe.html
-  upload: templates/tictactoe\.html
+  static_files: static/tictactoe.html
+  upload: static/tictactoe\.html
 
 # Endpoints handler
 - url: /_ah/spi/.*
