@@ -6,7 +6,7 @@
 package app
 
 import (
-	"github.com/crhym3/go-endpoints/endpoints"
+	"github.com/GoogleCloudPlatform/go-endpoints/endpoints"
 	"github.com/crhym3/go-tictactoe/tictactoe"
 )
 

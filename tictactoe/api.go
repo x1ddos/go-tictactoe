@@ -7,9 +7,12 @@ import (
 	"net/http"
 	"time"
 
-	"appengine/user"
+	"golang.org/x/net/context"
 
-	"github.com/crhym3/go-endpoints/endpoints"
+	"google.golang.org/appengine/user"
+	"google.golang.org/appengine/log"
+
+	"github.com/GoogleCloudPlatform/go-endpoints/endpoints"
 )
 
 const clientId = "YOUR-CLIENT-ID"
@@ -123,7 +126,7 @@ func (ttt *TicTacToeApi) ScoresInsert(r *http.Request,
 // getCurrentUser retrieves a user associated with the request.
 // If there's no user (e.g. no auth info present in the request) returns
 // an "unauthorized" error.
-func getCurrentUser(c endpoints.Context) (*user.User, error) {
+func getCurrentUser(c context.Context) (*user.User, error) {
 	u, err := endpoints.CurrentUser(c, scopes, audiences, clientIds)
 	if err != nil {
 		return nil, err
@@ -131,7 +134,8 @@ func getCurrentUser(c endpoints.Context) (*user.User, error) {
 	if u == nil {
 		return nil, errors.New("Unauthorized: Please, sign in.")
 	}
-	c.Debugf("Current user: %#v", u)
+
+	log.Debugf(c, "Current user: %#v", u)
 	return u, nil
 }
 
