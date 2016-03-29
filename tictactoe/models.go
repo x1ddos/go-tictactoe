@@ -3,9 +3,10 @@ package tictactoe
 import (
 	"time"
 
-	"appengine"
-	"appengine/datastore"
-	"appengine/user"
+	"google.golang.org/appengine/datastore"
+	"google.golang.org/appengine/user"
+
+	"golang.org/x/net/context"
 )
 
 const (
@@ -40,7 +41,7 @@ func (s *Score) timestamp() string {
 }
 
 // put stores the score in the Datastore.
-func (s *Score) put(c appengine.Context) (err error) {
+func (s *Score) put(c context.Context) (err error) {
 	key := s.key
 	if key == nil {
 		key = datastore.NewIncompleteKey(c, SCORE_KIND, nil)
@@ -65,7 +66,7 @@ func newUserScoreQuery(u *user.User) *datastore.Query {
 
 // fetchScores runs Query q and returns Score entities fetched from the
 // Datastore.
-func fetchScores(c appengine.Context, q *datastore.Query, limit int) (
+func fetchScores(c context.Context, q *datastore.Query, limit int) (
 	[]*Score, error) {
 
 	scores := make([]*Score, 0, limit)
